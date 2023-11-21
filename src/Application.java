@@ -6,6 +6,13 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+
 public class Application {
     public static void main(String[] args) {
         // Open the login frame
@@ -111,6 +118,7 @@ class Import {
 
 class Info extends JFrame {
     final String filepath = Import.filepath;
+    final boolean doneloading = true;
     public Info() {
         super("Main Application");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -122,6 +130,7 @@ class Info extends JFrame {
         setIconImage(icon.getImage());
 
         ProcessData();
+        //InfoPanel();
 
         setVisible(true);
     }
@@ -131,10 +140,35 @@ class Info extends JFrame {
         panel.setBackground(new Color(248, 248, 248));
 
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        System.out.println(filepath);
+        ImageIcon loading = new ImageIcon("src/img/loading.gif");
+        panel.add(new JLabel(loading, JLabel.CENTER));
 
         add(panel);
+
+        File file= new File(filepath);
+
+        // this gives you a 2-dimensional array of strings
+        List<List<String>> lines = new ArrayList<>();
+        Scanner inputStream;
+
+        try{
+            inputStream = new Scanner(file);
+
+            while(inputStream.hasNext()){
+                String line= inputStream.next();
+                String[] values = line.split(";");
+                // this adds the currently parsed line to the 2-dimensional string array
+                lines.add(Arrays.asList(values));
+            }
+
+            inputStream.close();
+        }catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(lines);
+
+
     }
 
     private void InfoPanel() {
