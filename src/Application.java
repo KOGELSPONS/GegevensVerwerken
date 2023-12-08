@@ -2,20 +2,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalTime;
+import java.time.LocalDate;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Application {
     public static void main(String[] args) {
         // Open the login frame
+        System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
         SwingUtilities.invokeLater(Login::new);
     }
 }
@@ -54,6 +54,9 @@ class Login extends JFrame {
         passwordField = new JPasswordField();
 
         JButton loginButton = new JButton("Login");
+        loginButton.setBorderPainted(true);
+        loginButton.setFocusPainted(false);
+        loginButton.setContentAreaFilled(false);
 
         loginButton.addActionListener(e -> validateLogin());
 
@@ -145,29 +148,7 @@ class Info extends JFrame {
 
         add(panel);
 
-        File file= new File(filepath);
-
-        // this gives you a 2-dimensional array of strings
-        List<List<String>> lines = new ArrayList<>();
-        Scanner inputStream;
-
-        try{
-            inputStream = new Scanner(file);
-
-            while(inputStream.hasNext()){
-                String line= inputStream.next();
-                String[] values = line.split(";");
-                // this adds the currently parsed line to the 2-dimensional string array
-                lines.add(Arrays.asList(values));
-            }
-
-            inputStream.close();
-        }catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println(lines);
-
+        CSVtoList(filepath);
 
     }
 
@@ -179,5 +160,53 @@ class Info extends JFrame {
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         add(panel);
+    }
+    void CSVtoList(String csvFile) {
+
+        try {
+            Scanner scanner = new Scanner(new File(csvFile));
+            LinkedList<String[]> csvData = new LinkedList<>();
+            LinkedList<String> Dates = new LinkedList<>();
+-
+            while (scanner.hasNextLine()) {
+                String[] line = scanner.nextLine().split(";");
+                csvData.add(line);
+            }
+
+            // Print the converted list
+            for (String[] row : csvData) {
+                if (!Dates.contains(row[0])){
+                    Dates.add(row[0]);
+                }
+            }
+
+            System.out.println(Dates);
+
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+class Data {
+    public LocalDate date;
+    public LocalTime time;
+    public float V;
+    public float A;
+
+    // Student class constructor
+    Data(String date, String time, String V, String A)
+    {
+        this.date = LocalDate.parse(date);
+        this.time = LocalTime.parse(time);
+        this.V = Float.parseFloat(V);
+        this.A = Float.parseFloat(A);
+    }
+
+    public void display()
+    {
+        System.out.println("Date: " + date + " " + "Time: " + time + " " + "Voltage: " + V + " " + "Ampere: " + A);
+        System.out.println();
     }
 }
